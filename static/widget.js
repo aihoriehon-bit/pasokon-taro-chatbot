@@ -57,15 +57,20 @@
     }
     .pasotaro-launcher .pasotaro-close-icon {
       display: none;
-      color: #fff;
-      font-size: 30px;
-      font-weight: bold;
-      line-height: 1;
       pointer-events: none;
     }
+    .pasotaro-launcher .pasotaro-close-icon svg {
+      width: 22px;
+      height: 22px;
+      display: block;
+    }
     .pasotaro-launcher.is-open img { display: none; }
-    .pasotaro-launcher.is-open .pasotaro-close-icon { display: inline-block; }
-    .pasotaro-launcher.is-open { width: 56px; height: 56px; }
+    .pasotaro-launcher.is-open .pasotaro-close-icon { display: flex; align-items: center; justify-content: center; }
+    .pasotaro-launcher.is-open {
+      width: 56px;
+      height: 56px;
+      padding: 0;
+    }
 
     /* === 吹き出し (ランチャーの左側) === */
     .pasotaro-callout {
@@ -190,7 +195,12 @@
   btn.setAttribute("aria-label", "パソコン太郎くんに質問する");
   btn.innerHTML = `
     <img src="${BASE_URL}/static/tarou.png" alt="">
-    <span class="pasotaro-close-icon">×</span>
+    <span class="pasotaro-close-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+      </svg>
+    </span>
   `;
 
   // ===== 吹き出し (左横) =====

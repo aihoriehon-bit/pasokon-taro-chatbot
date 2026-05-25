@@ -6,25 +6,17 @@
 
   const QUICK_TOPICS = [
     "営業時間を教えて",
-    "電話番号は?",
     "データ復旧の料金",
     "月額コンサルの相談",
-    "ホリエモン出版について",
-    "絵本はどこで買える?",
-    "コラボグッズが欲しい",
-    "イベントを依頼したい",
-    "SNS運用代行",
     "ホームページ制作",
-    "デザイン制作",
-    "システム開発について",
-    "出張対応してる?",
-    "パソコン修理について"
+    "ホリエモン出版について",
+    "お問い合わせ方法"
   ];
 
   const GREETING_LINES = [
-    "こんにちは!IT Support パソコン太郎です 👓",
+    "こんにちは!IT Support パソコン太郎です。",
     "",
-    "パソコンのお困りごと、何でもお気軽にご相談ください。",
+    "お困りごと、何でもお気軽にご相談ください。",
     "下のメニューから選ぶか、お気軽にメッセージをどうぞ!"
   ];
 
@@ -45,9 +37,16 @@
   }
 
   function renderText(str) {
-    return escapeHtml(str)
-      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-      .replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener" style="color:#d72027;">$1</a>');
+    let s = escapeHtml(str);
+    // 太字
+    s = s.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    // Markdown link [text](url) を <a> に
+    s = s.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
+      '<a href="$2" target="_blank" rel="noopener" style="color:#d72027;">$1</a>');
+    // 裸URL を <a> に (既存の <a href=...> 内のURLは除外、末尾の句読点や括弧は除外)
+    s = s.replace(/(^|[^"'>])(https?:\/\/[^\s<]+?)(?=[\s<)]|[、。,.!?]|$)/g,
+      '$1<a href="$2" target="_blank" rel="noopener" style="color:#d72027;">$2</a>');
+    return s;
   }
 
   function addBot(text, opts = {}) {
