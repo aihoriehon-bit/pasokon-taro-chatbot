@@ -1,0 +1,189 @@
+{# 共通スクリプト #}
+<script>
+(function() {
+  const API = window.location.origin;
+  const TAROU_SRC = "{{ url_for('static', filename='tarou.png') }}";
+
+  const QUICK_TOPICS = [
+    "営業時間を教えて",
+    "電話番号は?",
+    "所在地は?",
+    "データ復旧の料金",
+    "パソコン修理について",
+    "HP制作の相談",
+    "システム開発について",
+    "出張対応してる?",
+    "支払い方法",
+    "リモートサポート"
+  ];
+
+  const GREETING_LINES = [
+    "こんにちは!IT Support パソコン太郎です 👓",
+    "",
+    "パソコンのお困りごと、何でもお気軽にご相談ください。",
+    "下のメニューから選ぶか、お気軽にメッセージをどうぞ!"
+  ];
+
+  const messagesEl = document.getElementById("messages");
+  const inputEl = document.getElementById("userInput");
+  const sendBtn = document.getElementById("sendBtn");
+  const resetBtn = document.getElementById("resetBtn");
+
+  function scrollToBottom() {
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+
+  function escapeHtml(str) {
+    return str
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
+
+  function renderText(str) {
+    return escapeHtml(str)
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener" style="color:#d72027;">$1</a>');
+  }
+
+  function addBot(text, opts = {}) {
+    const wrap = document.createElement("div");
+    wrap.className = "message bot" + (opts.error ? "" : "");
+    const img = document.createElement("img");
+    img.src = TAROU_SRC;
+    img.alt = "パソコン太郎";
+    img.className = "bot-avatar";
+    wrap.appendChild(img);
+    const b = document.createElement("div");
+    b.className = "bubble" + (opts.error ? " error" : "");
+    b.innerHTML = renderText(text);
+    wrap.appendChild(b);
+    messagesEl.appendChild(wrap);
+    scrollToBottom();
+    return wrap;
+  }
+
+  function addUser(text) {
+    const wrap = document.createElement("div");
+    wrap.className = "message user";
+    const b = document.createElement("div");
+    b.className = "bubble";
+    b.innerHTML = renderText(text);
+    wrap.appendChild(b);
+    messagesEl.appendChild(wrap);
+    scrollToBottom();
+  }
+
+  function addDatePill() {
+    const d = new Date();
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const dd = String(d.getDate()).padStart(2, "0");
+    const pill = document.createElement("div");
+    pill.className = "date-pill";
+    pill.textContent = `${yyyy}/${mm}/${dd}`;
+    messagesEl.appendChild(pill);
+  }
+
+  function addQuickList() {
+    const list = document.createElement("div");
+    list.className = "quick-list";
+    QUICK_TOPICS.forEach(topic => {
+      const btn = document.createElement("button");
+      btn.className = "quick-item";
+      btn.textContent = topic;
+      btn.addEventListener("click", () => {
+        list.remove();
+        send(topic);
+      });
+      list.appendChild(btn);
+    });
+    messagesEl.appendChild(list);
+    scrollToBottom();
+    return list;
+  }
+
+  function showTyping() {
+    const wrap = document.createElement("div");
+    wrap.className = "message bot typing";
+    wrap.id = "typing-indicator";
+    const img = document.createElement("img");
+    img.src = TAROU_SRC;
+    img.className = "bot-avatar";
+    wrap.appendChild(img);
+    const b = document.createElement("div");
+    b.className = "bubble";
+    b.innerHTML = "<span></span><span></span><span></span>";
+    wrap.appendChild(b);
+    messagesEl.appendChild(wrap);
+    scrollToBottom();
+  }
+
+  function removeTyping() {
+    const el = document.getElementById("typing-indicator");
+    if (el) el.remove();
+  }
+
+  async function callApi(text) {
+    const res = await fetch(API + "/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ message: text }),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || `HTTP ${res.status}`);
+    }
+    const data = await res.json();
+    return data.reply;
+  }
+
+  async function send(text) {
+    if (!text) return;
+    addUser(text);
+    inputEl.value = "";
+    updateSendBtn();
+    sendBtn.disabled = true;
+    showTyping();
+    try {
+      const reply = await callApi(text);
+      removeTyping();
+      addBot(reply);
+    } catch (e) {
+      removeTyping();
+      addBot(`⚠️ エラー: ${e.message}\nしばらくしてからもう一度お試しください。`, { error: true });
+    } finally {
+      sendBtn.disabled = false;
+    }
+  }
+
+  function updateSendBtn() {
+    const has = inputEl.value.trim().length > 0;
+    sendBtn.classList.toggle("ready", has);
+  }
+
+  async function reset() {
+    await fetch(API + "/api/reset", { method: "POST", credentials: "include" }).catch(() => {});
+    messagesEl.innerHTML = "";
+    init();
+  }
+
+  function init() {
+    addDatePill();
+    addBot(GREETING_LINES.join("\n"));
+    addQuickList();
+  }
+
+  sendBtn.addEventListener("click", () => send(inputEl.value.trim()));
+  inputEl.addEventListener("input", updateSendBtn);
+  // Enter キーでの送信は無効化 (送信ボタンのみで送信)
+  inputEl.addEventListener("keydown", e => {
+    if (e.key === "Enter") e.preventDefault();
+  });
+  if (resetBtn) resetBtn.addEventListener("click", reset);
+
+  // 初期化
+  init();
+})();
+</script>

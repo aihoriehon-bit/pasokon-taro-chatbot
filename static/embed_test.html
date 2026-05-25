@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>埋め込みテストページ</title>
+  <style>
+    body { font-family: sans-serif; margin: 0; padding: 40px; background: #f0f0f0; }
+    h1 { color: #333; }
+    p { line-height: 1.8; color: #555; }
+  </style>
+</head>
+<body>
+  <h1>埋め込みテスト用ホームページ</h1>
+  <p>これは外部サイトを模した普通のページです。<br>
+  右下に赤い丸ボタンが表示されているはずです。クリックするとチャットが開きます。</p>
+  <p>このページのHTMLには次の1行を貼り付けただけです:</p>
+  <pre style="background:#fff;padding:12px;border-radius:6px;overflow:auto;">
+&lt;script src="/static/widget.js" async&gt;&lt;/script&gt;</pre>
+
+  <!-- 埋め込みコード -->
+  <script src="/static/widget.js" async></script>
+</body>
+</html>

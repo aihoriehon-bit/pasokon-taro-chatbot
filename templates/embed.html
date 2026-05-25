@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>パソコン太郎チャット</title>
+  {% include "_chat_styles.html" %}
+  <style>
+    /* iframe 内では全画面 */
+    html, body { height: 100%; }
+    body { background: #fff; }
+    .chat-shell { height: 100%; }
+  </style>
+</head>
+<body>
+  <div class="chat-shell">
+    <div class="chat-bar">
+      <img src="{{ url_for('static', filename='tarou.png') }}" alt="パソコン太郎">
+      <div class="bar-info">
+        <div class="bar-name">パソコン太郎</div>
+        <div class="bar-status">オンライン・応答中</div>
+      </div>
+      <div class="chat-bar-actions">
+        <button id="resetBtn" type="button">リセット</button>
+      </div>
+    </div>
+
+    <div class="messages" id="messages"></div>
+
+    <div class="composer">
+      <input type="text" id="userInput" placeholder="文章で質問を入力してください" autocomplete="off">
+      <button class="send" id="sendBtn" type="button">質問する</button>
+    </div>
+  </div>
+
+  {% include "_chat_script.html" %}
+</body>
+</html>
