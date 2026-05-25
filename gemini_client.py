@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 _client = None
-MODEL_NAME = "gemini-2.5-flash"
+MODEL_NAME = "gemini-3.5-flash"
 
 
 def _get_client():
