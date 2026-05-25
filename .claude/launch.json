@@ -2,10 +2,10 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "chatbot",
-      "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "3456"],
-      "port": 3456
+      "name": "flask",
+      "runtimeExecutable": "/Users/ma31082/Desktop/test0525/venv/bin/python",
+      "runtimeArgs": ["/Users/ma31082/Desktop/test0525/app.py"],
+      "port": 5002
     }
   ]
 }
