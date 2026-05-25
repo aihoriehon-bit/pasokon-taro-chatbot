@@ -176,11 +176,56 @@
   }
 
   sendBtn.addEventListener("click", () => send(inputEl.value.trim()));
-  inputEl.addEventListener("input", updateSendBtn);
-  // Enter キーでの送信は無効化 (送信ボタンのみで送信)
-  inputEl.addEventListener("keydown", e => {
-    if (e.key === "Enter") e.preventDefault();
+  inputEl.addEventListener("input", () => {
+    updateSendBtn();
+    // 入力が始まったら Enter ヒントは引っ込める
+    disarmEnter();
   });
+
+  // Enter は「2回押すと送信」方式 (誤送信防止)
+  let enterArmed = false;
+  let enterTimer = null;
+
+  function getOrCreateHint() {
+    let hint = document.getElementById("enterHint");
+    if (!hint) {
+      hint = document.createElement("div");
+      hint.id = "enterHint";
+      hint.className = "enter-hint";
+      hint.textContent = "もう一度 Enter で送信";
+      inputEl.parentElement.appendChild(hint);
+    }
+    return hint;
+  }
+  function armEnter() {
+    enterArmed = true;
+    getOrCreateHint().classList.add("show");
+    clearTimeout(enterTimer);
+    enterTimer = setTimeout(disarmEnter, 2500);
+  }
+  function disarmEnter() {
+    enterArmed = false;
+    const hint = document.getElementById("enterHint");
+    if (hint) hint.classList.remove("show");
+    clearTimeout(enterTimer);
+  }
+  inputEl.addEventListener("keydown", e => {
+    if (e.key !== "Enter") return;
+    e.preventDefault();
+    const text = inputEl.value.trim();
+    if (!text) {
+      disarmEnter();
+      return;
+    }
+    if (enterArmed) {
+      disarmEnter();
+      send(text);
+    } else {
+      armEnter();
+    }
+  });
+  inputEl.addEventListener("blur", disarmEnter);
+
   if (resetBtn) resetBtn.addEventListener("click", reset);
 
   // 初期化

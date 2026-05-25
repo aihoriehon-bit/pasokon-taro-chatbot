@@ -58,13 +58,18 @@
 
   .chat-bar .bar-info { flex: 1; line-height: 1.25; }
   .chat-bar .bar-name { font-weight: bold; font-size: 0.9rem; }
-  .chat-bar .bar-status { font-size: 0.7rem; opacity: 0.8; }
-  .chat-bar .bar-status::before {
-    content: ""; display: inline-block;
-    width: 7px; height: 7px;
-    border-radius: 50%; background: var(--red);
-    margin-right: 4px;
-    box-shadow: 0 0 0 2px rgba(215,32,39,0.3);
+  .chat-bar .bar-status {
+    font-size: 0.7rem;
+    opacity: 0.85;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--red);
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-top: 2px;
+    font-weight: 500;
   }
 
   .chat-bar-actions { display: flex; gap: 6px; }
@@ -225,6 +230,36 @@
   }
   .composer input:focus { border-color: var(--red); }
   .composer input::placeholder { color: #aaa; }
+
+  /* Enter キーの「もう一度押すと送信」ヒント */
+  .enter-hint {
+    position: absolute;
+    right: 16px;
+    bottom: 56px;
+    background: var(--black);
+    color: #fff;
+    font-size: 0.7rem;
+    padding: 4px 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    z-index: 10;
+  }
+  .enter-hint.show { opacity: 1; }
+  .enter-hint::after {
+    content: "";
+    position: absolute;
+    bottom: -4px;
+    right: 16px;
+    width: 0; height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid var(--black);
+  }
+
+  .composer { position: relative; }
 
   .composer .send {
     background: var(--gray-pill);
