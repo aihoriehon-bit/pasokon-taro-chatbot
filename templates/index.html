@@ -5,11 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>パソコン太郎 お問い合わせチャット</title>
   <style>
+    :root {
+      --red: #d72027;
+      --red-dark: #a8161c;
+      --red-bg: #fdecec;
+      --black: #1a1a1a;
+      --gray-line: #e6e6e6;
+      --gray-bg: #f6f6f6;
+    }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
-      background: linear-gradient(135deg, #e8f4fd 0%, #d0eaff 100%);
+      background: #fff;
+      color: var(--black);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -17,16 +27,33 @@
       padding: 20px;
     }
 
-    header { text-align: center; margin-bottom: 16px; }
-    header h1 { font-size: 1.5rem; color: #1a5fa8; font-weight: bold; }
-    header p { font-size: 0.85rem; color: #555; margin-top: 4px; }
+    header {
+      text-align: center;
+      margin-bottom: 16px;
+      border-bottom: 3px solid var(--red);
+      padding-bottom: 12px;
+      width: 100%;
+      max-width: 680px;
+    }
+    header h1 {
+      font-size: 1.5rem;
+      color: var(--black);
+      font-weight: bold;
+    }
+    header h1 .accent { color: var(--red); }
+    header p {
+      font-size: 0.85rem;
+      color: #666;
+      margin-top: 4px;
+    }
 
     .chat-wrapper {
       width: 100%;
       max-width: 680px;
       background: #fff;
-      border-radius: 20px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+      border: 1.5px solid var(--black);
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
       display: flex;
       flex-direction: column;
       overflow: hidden;
@@ -35,12 +62,13 @@
     }
 
     .chat-header {
-      background: linear-gradient(90deg, #1a5fa8, #2e86de);
+      background: var(--black);
       color: #fff;
       padding: 14px 20px;
       display: flex;
       align-items: center;
       gap: 12px;
+      border-bottom: 3px solid var(--red);
     }
 
     .chat-header img.avatar {
@@ -48,7 +76,7 @@
       height: 48px;
       border-radius: 50%;
       object-fit: cover;
-      border: 2px solid rgba(255,255,255,0.6);
+      border: 2px solid var(--red);
       background: #fff;
     }
 
@@ -59,24 +87,28 @@
     .status-dot {
       width: 8px;
       height: 8px;
-      background: #4cde80;
+      background: var(--red);
       border-radius: 50%;
       display: inline-block;
       margin-right: 4px;
+      box-shadow: 0 0 0 2px rgba(215,32,39,0.25);
     }
 
     .reset-btn {
-      background: rgba(255,255,255,0.2);
-      border: none;
+      background: transparent;
+      border: 1.5px solid #fff;
       color: #fff;
       padding: 6px 12px;
       font-size: 0.75rem;
       border-radius: 14px;
       cursor: pointer;
       font-family: inherit;
-      transition: background 0.2s;
+      transition: background 0.2s, color 0.2s;
     }
-    .reset-btn:hover { background: rgba(255,255,255,0.35); }
+    .reset-btn:hover {
+      background: var(--red);
+      border-color: var(--red);
+    }
 
     .messages {
       flex: 1;
@@ -85,6 +117,7 @@
       display: flex;
       flex-direction: column;
       gap: 16px;
+      background: #fff;
     }
 
     .message { display: flex; gap: 10px; align-items: flex-end; }
@@ -97,14 +130,14 @@
       border-radius: 50%;
       object-fit: cover;
       flex-shrink: 0;
-      background: #f0f4ff;
-      border: 2px solid #c8dcf8;
+      background: #fff;
+      border: 2px solid var(--red);
     }
 
     .bubble {
       max-width: 72%;
       padding: 10px 14px;
-      border-radius: 18px;
+      border-radius: 14px;
       font-size: 0.9rem;
       line-height: 1.6;
       white-space: pre-wrap;
@@ -112,22 +145,25 @@
     }
 
     .message.bot .bubble {
-      background: #f0f6ff;
-      border: 1px solid #c8dcf8;
-      color: #1a2a3a;
+      background: var(--gray-bg);
+      border: 1px solid var(--gray-line);
+      color: var(--black);
       border-bottom-left-radius: 4px;
     }
 
     .message.user .bubble {
-      background: #1a5fa8;
+      background: var(--red);
       color: #fff;
       border-bottom-right-radius: 4px;
     }
 
+    .bubble strong { color: var(--red); font-weight: bold; }
+    .message.user .bubble strong { color: #fff; text-decoration: underline; }
+
     .bubble.error {
-      background: #fff4f4;
-      border-color: #ffb8b8;
-      color: #c0392b;
+      background: var(--red-bg);
+      border-color: var(--red);
+      color: var(--red-dark);
     }
 
     .typing .bubble {
@@ -140,7 +176,7 @@
     .typing .bubble span {
       width: 8px;
       height: 8px;
-      background: #1a5fa8;
+      background: var(--red);
       border-radius: 50%;
       display: inline-block;
       animation: bounce 1.2s infinite;
@@ -158,45 +194,52 @@
       flex-wrap: wrap;
       gap: 8px;
       padding: 0 16px 12px;
+      background: #fff;
     }
 
     .quick-btn {
-      background: #f0f6ff;
-      border: 1.5px solid #1a5fa8;
-      color: #1a5fa8;
-      border-radius: 20px;
+      background: #fff;
+      border: 1.5px solid var(--black);
+      color: var(--black);
+      border-radius: 18px;
       padding: 6px 14px;
       font-size: 0.8rem;
       cursor: pointer;
-      transition: background 0.2s, color 0.2s;
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
       font-family: inherit;
     }
-    .quick-btn:hover { background: #1a5fa8; color: #fff; }
+    .quick-btn:hover {
+      background: var(--red);
+      border-color: var(--red);
+      color: #fff;
+    }
     .quick-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
     .input-area {
-      border-top: 1px solid #e8eef5;
+      border-top: 1.5px solid var(--gray-line);
       padding: 12px 16px;
       display: flex;
       gap: 10px;
-      background: #fafcff;
+      background: #fff;
+      align-items: center;
     }
 
     .input-area input {
       flex: 1;
-      border: 1.5px solid #c8dcf8;
-      border-radius: 24px;
+      border: 1.5px solid var(--gray-line);
+      border-radius: 22px;
       padding: 10px 16px;
       font-size: 0.9rem;
       outline: none;
       font-family: inherit;
       background: #fff;
+      color: var(--black);
       transition: border-color 0.2s;
     }
-    .input-area input:focus { border-color: #1a5fa8; }
+    .input-area input:focus { border-color: var(--red); }
 
     .send-btn {
-      background: #1a5fa8;
+      background: var(--red);
       color: #fff;
       border: none;
       border-radius: 50%;
@@ -209,24 +252,31 @@
       transition: background 0.2s, transform 0.1s;
       flex-shrink: 0;
     }
-    .send-btn:hover { background: #154d8a; }
+    .send-btn:hover { background: var(--red-dark); }
     .send-btn:active { transform: scale(0.95); }
     .send-btn:disabled { background: #aaa; cursor: not-allowed; }
     .send-btn svg { width: 20px; height: 20px; fill: #fff; }
 
+    .input-hint {
+      font-size: 0.7rem;
+      color: #999;
+      text-align: right;
+      margin: 4px 16px 0;
+    }
+
     footer {
       margin-top: 14px;
       font-size: 0.75rem;
-      color: #888;
+      color: #666;
       text-align: center;
     }
-    footer a { color: #1a5fa8; text-decoration: none; }
+    footer a { color: var(--red); text-decoration: none; font-weight: 500; }
     footer a:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
   <header>
-    <h1>IT Support パソコン太郎株式会社</h1>
+    <h1>IT Support <span class="accent">パソコン太郎</span>株式会社</h1>
     <p>お問い合わせチャットサポート (Powered by Gemini)</p>
   </header>
 
@@ -248,7 +298,7 @@
       <input
         type="text"
         id="userInput"
-        placeholder="メッセージを入力してください…"
+        placeholder="メッセージを入力後、送信ボタンを押してください"
         autocomplete="off"
       >
       <button class="send-btn" id="sendBtn" aria-label="送信">
@@ -304,7 +354,7 @@
     function renderText(str) {
       return escapeHtml(str)
         .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-        .replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" style="color:#1a5fa8;">$1</a>');
+        .replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" style="color:#d72027;">$1</a>');
     }
 
     function addMessage(text, role, isError = false) {
@@ -415,9 +465,13 @@
       showQuickReplies();
     }
 
+    // 送信は送信ボタンのみ。Enter キーでの送信は無効化(改行も挿入されません)
     sendBtn.addEventListener("click", handleSend);
     inputEl.addEventListener("keydown", e => {
-      if (e.key === "Enter" && !sendBtn.disabled) handleSend();
+      if (e.key === "Enter") {
+        // Enter キーは送信に使わない(入力欄が誤って送信されるのを防ぐ)
+        e.preventDefault();
+      }
     });
     resetBtn.addEventListener("click", resetChat);
 
