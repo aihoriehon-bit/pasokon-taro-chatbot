@@ -200,7 +200,7 @@
   callout.setAttribute("tabindex", "0");
   callout.setAttribute("aria-label", "パソコン太郎くんに質問する");
   callout.innerHTML = `
-    僕が質問に答えるよ!<small>🤖 AIチャット (パソコン太郎)</small>
+    僕が質問に答えるよ!<small>AIチャット (パソコン太郎)</small>
   `;
 
   // ===== チャットパネル =====
