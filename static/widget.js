@@ -42,7 +42,8 @@
       font-family: 'Hiragino Kaku Gothic ProN','Meiryo','Hiragino Sans',sans-serif;
       transition: transform 0.15s, background 0.2s, box-shadow 0.2s;
     }
-    .pasotaro-launcher:hover {
+    .pasotaro-launcher:hover,
+    .pasotaro-launcher.is-hovered {
       transform: translateY(-2px);
       box-shadow: 0 10px 24px rgba(0,0,0,0.28);
     }
@@ -84,8 +85,12 @@
       line-height: 1.4;
       max-width: 200px;
       cursor: pointer;
-      animation: pasotaroPulse 2.6s ease-in-out infinite;
-      transition: opacity 0.2s;
+      transition: transform 0.15s, box-shadow 0.2s, opacity 0.2s;
+    }
+    .pasotaro-callout:hover,
+    .pasotaro-callout.is-hovered {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(0,0,0,0.22);
     }
     .pasotaro-callout small {
       display: block;
@@ -113,11 +118,6 @@
       border-left: 11px solid #d72027;
     }
     .pasotaro-callout.is-open { display: none; }
-
-    @keyframes pasotaroPulse {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-3px); }
-    }
 
     /* === チャットパネル === */
     .pasotaro-panel {
@@ -228,6 +228,16 @@
       e.preventDefault();
       toggle();
     }
+  });
+
+  // ホバー時に両方一緒に少し動かす
+  function setHover(on) {
+    btn.classList.toggle("is-hovered", on);
+    callout.classList.toggle("is-hovered", on);
+  }
+  [btn, callout].forEach(el => {
+    el.addEventListener("mouseenter", () => setHover(true));
+    el.addEventListener("mouseleave", () => setHover(false));
   });
 
   // ===== DOM 追加 =====
