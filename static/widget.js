@@ -21,53 +21,38 @@
   // ===== スタイル =====
   const style = document.createElement("style");
   style.textContent = `
-    /* === ピル型ランチャー (閉じてる時) === */
+    /* === 丸型ランチャー (閉じてる時) === */
     .pasotaro-launcher {
       position: fixed;
       bottom: 24px;
       right: 24px;
+      width: 72px;
+      height: 72px;
       background: #d72027;
-      color: #fff;
       border: 3px solid #fff;
-      border-radius: 999px;
+      border-radius: 50%;
       box-shadow: 0 6px 20px rgba(0,0,0,0.25);
       z-index: 2147483600;
-      padding: 4px 18px 4px 4px;
+      padding: 0;
       cursor: pointer;
+      overflow: hidden;
       display: flex;
       align-items: center;
-      gap: 10px;
-      height: 64px;
+      justify-content: center;
       font-family: 'Hiragino Kaku Gothic ProN','Meiryo','Hiragino Sans',sans-serif;
       transition: transform 0.15s, background 0.2s, box-shadow 0.2s;
     }
     .pasotaro-launcher:hover {
-      background: #a8161c;
       transform: translateY(-2px);
       box-shadow: 0 10px 24px rgba(0,0,0,0.28);
     }
     .pasotaro-launcher img {
-      width: 50px;
-      height: 50px;
+      width: 100%;
+      height: 100%;
       border-radius: 50%;
       object-fit: cover;
       background: #fff;
-      flex-shrink: 0;
       pointer-events: none;
-    }
-    .pasotaro-launcher .pasotaro-label {
-      font-size: 14px;
-      font-weight: bold;
-      white-space: nowrap;
-      line-height: 1.25;
-      pointer-events: none;
-    }
-    .pasotaro-launcher .pasotaro-label small {
-      display: block;
-      font-size: 10px;
-      font-weight: 500;
-      opacity: 0.9;
-      margin-top: 1px;
     }
     .pasotaro-launcher .pasotaro-close-icon {
       display: none;
@@ -77,32 +62,71 @@
       line-height: 1;
       pointer-events: none;
     }
+    .pasotaro-launcher.is-open img { display: none; }
+    .pasotaro-launcher.is-open .pasotaro-close-icon { display: inline-block; }
+    .pasotaro-launcher.is-open { width: 56px; height: 56px; }
 
-    /* === 開いてる時 → 円形のXボタンへ === */
-    .pasotaro-launcher.is-open {
-      width: 56px;
-      height: 56px;
-      padding: 0;
-      justify-content: center;
-      gap: 0;
-      border-radius: 50%;
+    /* === 吹き出し (ランチャーの左側) === */
+    .pasotaro-callout {
+      position: fixed;
+      bottom: 32px;
+      right: 110px;
+      background: #fff;
+      color: #1a1a1a;
+      border: 2px solid #d72027;
+      border-radius: 14px;
+      padding: 10px 14px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+      z-index: 2147483599;
+      font-family: 'Hiragino Kaku Gothic ProN','Meiryo','Hiragino Sans',sans-serif;
+      font-size: 13px;
+      font-weight: bold;
+      line-height: 1.4;
+      max-width: 200px;
+      cursor: pointer;
+      animation: pasotaroPulse 2.6s ease-in-out infinite;
+      transition: opacity 0.2s;
     }
-    .pasotaro-launcher.is-open img,
-    .pasotaro-launcher.is-open .pasotaro-label {
-      display: none;
+    .pasotaro-callout small {
+      display: block;
+      font-size: 10px;
+      font-weight: 500;
+      color: #6b6b6b;
+      margin-top: 2px;
     }
-    .pasotaro-launcher.is-open .pasotaro-close-icon {
-      display: inline-block;
+    .pasotaro-callout::after,
+    .pasotaro-callout::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 0; height: 0;
+      border-top: 9px solid transparent;
+      border-bottom: 9px solid transparent;
+    }
+    .pasotaro-callout::after {
+      right: -8px;
+      border-left: 9px solid #fff;
+    }
+    .pasotaro-callout::before {
+      right: -11px;
+      border-left: 11px solid #d72027;
+    }
+    .pasotaro-callout.is-open { display: none; }
+
+    @keyframes pasotaroPulse {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-3px); }
     }
 
     /* === チャットパネル === */
     .pasotaro-panel {
       position: fixed;
-      bottom: 104px;
+      bottom: 110px;
       right: 24px;
       width: 380px;
       height: 600px;
-      max-height: calc(100vh - 140px);
+      max-height: calc(100vh - 150px);
       background: #fff;
       border-radius: 14px;
       box-shadow: 0 12px 40px rgba(0,0,0,0.25);
@@ -130,14 +154,19 @@
       .pasotaro-launcher {
         bottom: 16px;
         right: 16px;
-        height: 56px;
-        padding: 4px 14px 4px 4px;
-        gap: 8px;
+        width: 62px;
+        height: 62px;
       }
-      .pasotaro-launcher img { width: 44px; height: 44px; }
-      .pasotaro-launcher .pasotaro-label { font-size: 12px; }
-      .pasotaro-launcher .pasotaro-label small { font-size: 9px; }
       .pasotaro-launcher.is-open { width: 50px; height: 50px; }
+
+      .pasotaro-callout {
+        bottom: 22px;
+        right: 88px;
+        font-size: 12px;
+        padding: 8px 11px;
+        max-width: 150px;
+      }
+      .pasotaro-callout small { font-size: 9px; }
 
       .pasotaro-panel {
         width: calc(100vw - 24px);
@@ -147,22 +176,31 @@
       }
     }
 
-    /* スマホで横幅厳しい場合はラベルを短く */
-    @media (max-width: 360px) {
-      .pasotaro-launcher .pasotaro-label small { display: none; }
+    /* 極小画面では吹き出しを非表示 */
+    @media (max-width: 340px) {
+      .pasotaro-callout { display: none; }
     }
   `;
   document.head.appendChild(style);
 
-  // ===== ランチャーボタン =====
+  // ===== ランチャーボタン (丸型) =====
   const btn = document.createElement("button");
   btn.className = "pasotaro-launcher";
   btn.type = "button";
   btn.setAttribute("aria-label", "パソコン太郎くんに質問する");
   btn.innerHTML = `
     <img src="${BASE_URL}/static/tarou.png" alt="">
-    <span class="pasotaro-label">パソコン太郎くんに質問する<small>🤖 AI応答</small></span>
     <span class="pasotaro-close-icon">×</span>
+  `;
+
+  // ===== 吹き出し (左横) =====
+  const callout = document.createElement("div");
+  callout.className = "pasotaro-callout";
+  callout.setAttribute("role", "button");
+  callout.setAttribute("tabindex", "0");
+  callout.setAttribute("aria-label", "パソコン太郎くんに質問する");
+  callout.innerHTML = `
+    僕が質問に答えるよ!<small>🤖 AIチャット (パソコン太郎)</small>
   `;
 
   // ===== チャットパネル =====
@@ -179,14 +217,23 @@
   function toggle() {
     opened = !opened;
     btn.classList.toggle("is-open", opened);
+    callout.classList.toggle("is-open", opened);
     panel.classList.toggle("is-open", opened);
     panel.setAttribute("aria-hidden", opened ? "false" : "true");
   }
   btn.addEventListener("click", toggle);
+  callout.addEventListener("click", toggle);
+  callout.addEventListener("keydown", e => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      toggle();
+    }
+  });
 
   // ===== DOM 追加 =====
   function mount() {
     document.body.appendChild(panel);
+    document.body.appendChild(callout);
     document.body.appendChild(btn);
   }
   if (document.readyState === "loading") {
