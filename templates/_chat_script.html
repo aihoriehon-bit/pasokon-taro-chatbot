@@ -37,15 +37,29 @@
   }
 
   function renderText(str) {
+    // URL を必ずクリック可能にする
+    // 1) Markdown link [text](url) を <a> に
+    // 2) 裸URL → URL-safe な文字のみ拾い、末尾の句読点・カッコは除外
+    //    (半角・全角の括弧、日本語句読点、引用符などをURLに含めない)
     let s = escapeHtml(str);
     // 太字
     s = s.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-    // Markdown link [text](url) を <a> に
-    s = s.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
+
+    // Markdown形式 [text](url) を <a> に
+    s = s.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)）]+)\)/g,
       '<a href="$2" target="_blank" rel="noopener" style="color:#d72027;">$1</a>');
-    // 裸URL を <a> に (既存の <a href=...> 内のURLは除外、末尾の句読点や括弧は除外)
-    s = s.replace(/(^|[^"'>])(https?:\/\/[^\s<]+?)(?=[\s<)]|[、。,.!?]|$)/g,
-      '$1<a href="$2" target="_blank" rel="noopener" style="color:#d72027;">$2</a>');
+
+    // 裸URL: 半角URL-safe文字のみマッチ。日本語/全角/カッコ/引用符でストップ。
+    // 末尾の句読点(. , ! ? ; : 、 。)は除去する。
+    const URL_RE = /(https?:\/\/[A-Za-z0-9\-._~:\/?#@!$&'*+=%]+)/g;
+    s = s.replace(URL_RE, (match) => {
+      let url = match;
+      // 末尾の句読点を剥がす
+      while (/[.,!?;:]$/.test(url)) url = url.slice(0, -1);
+      // 末尾の閉じカッコ ) があってかつ対応する ( がURL内にない場合も剥がす
+      if (url.endsWith(')') && !url.slice(0, -1).includes('(')) url = url.slice(0, -1);
+      return `<a href="${url}" target="_blank" rel="noopener" style="color:#d72027;">${url}</a>`;
+    });
     return s;
   }
 
