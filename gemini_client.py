@@ -294,10 +294,20 @@ def chat(user_message: str, history: list[dict] | None = None) -> str:
                 max_output_tokens=1024,
             ),
         )
-        return (response.text or "").strip() or _fallback_answer(user_message)
+        reply = (response.text or "").strip()
+        return _sanitize(reply) if reply else _fallback_answer(user_message)
     except Exception as e:
         print(f"Gemini API error: {e}")
         return _fallback_answer(user_message)
+
+
+def _sanitize(text: str) -> str:
+    """Gemini が指示を無視して出力した不要な要素を除去する。"""
+    # 眼鏡の絵文字 👓 は使わない方針 (Geminiが時々入れてしまうため強制除去)
+    text = text.replace("👓", "")
+    # 連続スペースの整理
+    text = text.replace("  ", " ")
+    return text.strip()
 
 
 _FALLBACK_KB = [
