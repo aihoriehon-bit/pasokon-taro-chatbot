@@ -49,7 +49,7 @@ jobs:
             --allow-unauthenticated \
             --memory 512Mi \
             --timeout 60 \
-            --set-env-vars "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }},SECRET_KEY=${{ secrets.SECRET_KEY }}"
+            --set-env-vars "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }},SECRET_KEY=${{ secrets.SECRET_KEY }},GOOGLE_CHAT_WEBHOOK=${{ secrets.GOOGLE_CHAT_WEBHOOK }}"
 
       - name: Show deployed URL
         run: |
