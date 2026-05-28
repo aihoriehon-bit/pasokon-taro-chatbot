@@ -7,9 +7,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 _client = None
-# gemini-3.5-flash は無料枠が 1日20リクエストと厳しいため、
-# 実用枠の広い gemini-2.5-flash を使用 (応答品質はほぼ同等)
-MODEL_NAME = "gemini-2.5-flash"
+# 有料Tier 1 の Prepay クレジットを購入済みのため、最新の gemini-3.5-flash を使用
+# (無料枠の20RPD制限は解除されている)
+MODEL_NAME = "gemini-3.5-flash"
 
 
 def _get_client():
